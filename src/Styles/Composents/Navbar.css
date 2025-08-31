@@ -1,0 +1,41 @@
+nav {
+    z-index: 3;
+}
+
+.navbar {
+    display: inline;
+}
+
+ul {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    list-style: none;
+    background-color: bisque;
+    padding: 20px;
+}
+
+a,
+button.nav-button {
+    font-size: x-large;
+    text-decoration: underline;
+    color: black;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+    display: inline; /* uniformise */
+    line-height: normal;
+    vertical-align: middle;
+}
+
+
+a:hover,
+button.nav-button:hover {
+    color: black;
+    text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.40);
+    transform: scale(1.05);
+    transition: all 0.3s ease;
+}

@@ -1,0 +1,31 @@
+.Animation-Title {
+    display: flex;
+    justify-content: center;
+    font-size: 3rem;
+    font-weight: bold;
+    margin-top: 50px;
+}
+
+.left span,
+.right span {
+    display: inline-block;
+    opacity: 0;
+    transform: translateX(0); /* point de départ neutre */
+    animation: slideIn 1s forwards;
+    text-shadow: 0 0 100px rgba(0, 0, 0, 1);
+}
+
+.left span {
+    transform: translateX(-500px); /* glisse depuis la gauche */
+}
+
+.right span {
+    transform: translateX(500px); /* glisse depuis la droite */
+}
+
+@keyframes slideIn {
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}

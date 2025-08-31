@@ -1,0 +1,96 @@
+/* HomePage.css */
+
+/* Scroll fluide */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Section générale */
+.section {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 1.5rem;
+    text-align: center;
+}
+
+/* Section blanche */
+.section-white {
+    background-color: lavender;
+    color: #1F2937;
+}
+
+/* Section grise */
+.section-gray {
+    background-color: bisque;
+}
+
+/* Titres */
+.title-main {
+    font-size: 3rem;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+}
+
+.title-sub {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 2.5rem;
+}
+
+.title-contact {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 2rem;
+}
+
+/* Formulaire */
+.form-container {
+    width: 100%;
+    max-width: 400px;
+    text-align: left;
+}
+
+.input-field,
+.textarea-field {
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    border-radius: 0.375rem;
+    background-color: lightgray;
+    border: none;
+}
+
+.submit-button {
+    background-color: #2563EB;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    border: none;
+    cursor: pointer;
+}
+
+.bloc-contact {
+    background-color: white;
+    box-shadow: 0px 8px 30px rgba(0, 0, 0, 0.2);
+    border-radius: 1rem; /* adoucit les bords si tu veux */
+    margin: 2rem;
+    padding: 2rem;
+}
+
+.bloc-story {
+    width: 500px;
+    height: 300px;
+    border-radius: 50%;
+    background-color: white;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    display: block;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    text-align: center;
+    margin: 100px;
+}

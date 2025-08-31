@@ -1,0 +1,207 @@
+import axios from "axios";
+
+// URLs de base
+const BASE_URL_PRODUCT = "http://localhost:8080/api/products";
+const BASE_URL_DESIGN = "http://localhost:8080/api/design";
+
+// 1. Récupérer tous les produits
+export const AllProducts = async () => {
+    try {
+        const response = await axios.get(BASE_URL_PRODUCT, {
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Les produits ne sont pas disponibles", error.message);
+        throw error;
+    }
+};
+
+// 2. Récupérer un produit par son ID
+export const ProductById = async (productId) => {
+    try {
+        const response = await axios.get(`${BASE_URL_PRODUCT}/${productId}`, {
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Le produit n'est pas disponible", error.message);
+        throw error;
+    }
+};
+
+// 3. Mettre à jour un produit
+export const updateProduct = async (productId, updatedData) => {
+    const formData = new FormData();
+    formData.append("name", updatedData.name);
+    formData.append("description", updatedData.description);
+    formData.append("price", updatedData.price);
+    formData.append("quantity", updatedData.quantity);
+
+    // Ajoute le fichier s'il est présent
+    if (updatedData.image instanceof File) {
+        formData.append("image", updatedData.image);
+    }
+
+    try {
+        const response = await axios.put(`${BASE_URL_PRODUCT}/update/${productId}`, formData, {
+            headers: {
+                "Content-Type": "multipart/form-data"
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Le produit ne peut pas être mis à jour", error.message);
+        throw error;
+    }
+};
+
+
+// 4. Supprimer un produit
+export const deleteProduct = async (productId) => {
+    try {
+        const response = await axios.delete(`${BASE_URL_PRODUCT}/${productId}`, {
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Le produit ne peut pas être supprimé", error.message);
+        throw error;
+    }
+};
+
+// 5. Acheter un produit
+export const buyProduct = async (productId) => {
+    try {
+        const response = await axios.post(`${BASE_URL_PRODUCT}/buy/${productId}`, {}, {
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Le produit ne peut pas être acheté", error.message);
+        throw error;
+    }
+};
+
+// 6. Création d'un produit
+export const createProduct = async (product) => {
+    try {
+        const formData = new FormData();
+        formData.append("name", product.name);
+        formData.append("description", product.description);
+        formData.append("price", product.price);
+        formData.append("quantity", product.quantity);
+        formData.append("categoryName", product.category); // le nom attendu par le backend
+        formData.append("image", product.imageFile);// image en tant que fichier
+        console.log("Données envoyées :", formData);
+
+        const response = await axios.post(`${BASE_URL_PRODUCT}/create`, formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        });
+
+        return response.data;
+    } catch (error) {
+        console.error("Le produit ne peut pas être créé :", error.message);
+        throw error;
+    }
+};
+
+// // 7. Achat du produit et sauvegarde du design
+// export const SaveDesignProduct = async (designId, payload) => {
+//     try {
+//         const response = await axios.post(`${BASE_URL_DESIGN}/${designId}/saveImage`, payload, {
+//             headers: {
+//                 "Content-Type": "application/json",
+//             },
+//         });
+//         return response.data;
+//     } catch (error) {
+//         console.log("Erreur lors de la sauvegarde du design", error.message);
+//         throw error;
+//     }
+// }
+
+// 7. Sauvegarde du design et du produit
+export const SaveDesignProduct = async (productId, payload) => {
+    try {
+        const response = await axios.post(`${BASE_URL_DESIGN}/product/${productId}/saveImage`, {
+            designImage: payload.previewImage,
+            // Ajoutez d'autres champs si nécessaire
+            productData: payload.productData,
+            overlay: payload.overlay
+        }, {
+            params: {
+                userId: 1 // Remplacez par l'ID utilisateur réel
+            },
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Erreur lors de la sauvegarde du design", error.message);
+        throw error;
+    }
+};
+
+// 8. Sauvegarder une image en base64
+export const SaveCapturedImage = async (productId, base64Image) => {
+    try {
+        // Option 1: Utiliser le nouvel endpoint avec productId
+        const response = await axios.post(`${BASE_URL_DESIGN}/product/${productId}/saveImage`, {
+            designImage: base64Image
+        }, {
+            params: {
+                userId: 1 // Remplacez par l'ID utilisateur réel
+            },
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+
+        return response.data;
+    } catch (error) {
+        console.error("Erreur lors de la sauvegarde de l'image base64", error);
+
+        // Log plus détaillé pour debug
+        if (error.response) {
+            console.error("Status:", error.response.status);
+            console.error("Data:", error.response.data);
+            console.error("Headers:", error.response.headers);
+        }
+
+        throw error;
+    }
+};
+
+// 9. Suppression du design
+export const deleteDesign = async (designId, userId = 1) => {
+    try {
+        const response = await axios.post(`${BASE_URL_DESIGN}/deleteDesign`, {
+            // Corps de la requête si nécessaire
+        }, {
+            params: {
+                userId: userId,
+                designId: designId
+            },
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+
+        return response.data;
+    } catch (error) {
+        console.error("Erreur lors de la suppression du design", error.message);
+        throw error;
+    }
+};

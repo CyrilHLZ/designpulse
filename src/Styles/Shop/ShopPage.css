@@ -1,0 +1,31 @@
+.fond_de_page {
+    background-color: lavender;
+}
+
+.container-fluid {
+    background-color: lavender;
+}
+
+.sidebar {
+    position: absolute;
+    top: 210px; /* ajuste selon la hauteur de ton <Navbar> */
+    left: 0;
+    width: 20%;
+    height: 30vh;
+    background-color: bisque;
+    padding: 20px;
+    border-right: 1px solid #dee2e6;
+    overflow-y: auto;
+    z-index: 1000;
+}
+
+.content {
+    margin-left: 20%;
+    padding: 30px;
+}
+
+.menu {
+    background-color: bisque !important;
+    color: black !important;
+    margin-left: 10px;
+}

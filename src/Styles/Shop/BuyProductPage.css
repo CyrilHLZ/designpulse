@@ -1,0 +1,10 @@
+.container-product-infos {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.container_boutton {
+    display: flex;
+    flex-direction: column;
+}
