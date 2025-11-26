@@ -33,6 +33,16 @@ export const getOrdersByNumber = async (number) => {
     }
 };
 
+export const getOrderById = async (orderId) => {
+    try {
+        const reponse = await axios.get(`${BASE_URL}/orders/${orderId}`);
+        return reponse.data;
+    } catch (error) {
+        console.error("Erreur lors de la récupération de la commande", error)
+        throw error;
+    }
+};
+
 export const getOrdersByUserId = async (userId) => {
     try {
         const response = await axios.get(`${BASE_URL}/orders/user/${userId}`);
@@ -55,7 +65,7 @@ export const deleteOrderById = async (orderId) => {
 
 export const getAllUsers = async () => {
     try {
-        const response = await axios.get(`${BASE_URL}/api/users`);
+        const response = await axios.get(`${BASE_URL}/users`);
         return response.data;
     } catch (error) {
         console.error("Erreur lors de la recuperation des utilisateurs", error.message);
@@ -65,9 +75,20 @@ export const getAllUsers = async () => {
 
 export const updateUserRole = async (userId, role) => {
     try {
-        await axios.put(`${BASE_URL}/api/users/${userId}/role`, { role });
+        const response = await axios.put(`${BASE_URL}/api/users/${userId}/role`, { role });
+        return response.data;
     } catch (error) {
         console.error("Erreur lors de la modification du role de l'utilisateur", error.message);
         throw error;
     }
 };
+
+export const updateOrder = async (orderId, orderData) => {
+    try {
+        const response = await axios.put(`${BASE_URL}/orders/${orderId}`, orderData);
+        return response.data;
+    } catch (error) {
+        console.error("Erreur lors de la modification de la commande", error);
+        throw error;
+    }
+}

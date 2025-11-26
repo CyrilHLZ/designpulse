@@ -1,31 +1,382 @@
+/* ShopPage.css - Version Corrigée */
+
+/* Variables cohérentes avec la homepage */
+:root {
+  --noir-charcoal: #1A1A1A;
+  --noir-profond: #2D2D2D;
+  --beige-luxe: #F7F3F0;
+  --beige-doux: #EFEAE5;
+  --or-pale: #D4AF37;
+  --or-satin: #E6C97E;
+  --or-brillant: #FFD700;
+  --taupe: #8A7F6F;
+  --taupe-clair: #B8B0A2;
+  --text-dark: #1A1A1A;
+  --text-light: #5C5C5C;
+  --border-radius: 16px;
+  --transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --shadow-elegant: 0 8px 40px rgba(0, 0, 0, 0.08);
+  --shadow-gold: 0 8px 30px rgba(212, 175, 55, 0.15);
+}
+
+/* RESET IMPORTANT */
 .fond_de_page {
-    background-color: lavender;
+    background: linear-gradient(135deg, var(--beige-luxe) 0%, var(--beige-doux) 100%);
+    min-height: 100vh;
+    padding: 0 !important; /* Supprime le padding qui crée l'espace */
+    margin: 0;
 }
 
 .container-fluid {
-    background-color: lavender;
+    background: transparent;
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 0 2rem;
 }
 
+/* Sidebar élégante CORRIGÉE */
 .sidebar {
-    position: absolute;
-    top: 210px; /* ajuste selon la hauteur de ton <Navbar> */
-    left: 0;
-    width: 20%;
-    height: 30vh;
-    background-color: bisque;
-    padding: 20px;
-    border-right: 1px solid #dee2e6;
+    position: fixed;
+    top: 110px; /* Directement sous la navbar */
+    left: 2rem;
+    width: 400px;
+    height: calc(100vh - 90px); /* Hauteur ajustée */
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-elegant);
+    border: 1px solid rgba(255, 255, 255, 0.6);
     overflow-y: auto;
-    z-index: 1000;
+    z-index: 999;
 }
 
+.sidebar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--or-pale), var(--or-brillant));
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
+}
+
+.menu h4 {
+    font-size: 1.4rem;
+    font-weight: 350;
+    color: var(--noir-profond);
+    margin-bottom: 1.5rem;
+    text-align: center;
+    position: relative;
+}
+
+.menu h4::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50px;
+    height: 2px;
+    background: var(--or-pale);
+}
+
+/* Boutons sidebar */
+.sidebar .btn {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid var(--taupe-clair);
+    color: var(--noir-profond);
+    padding: 0.9rem 1.2rem;
+    border-radius: 10px;
+    font-weight: 400;
+    transition: var(--transition);
+    margin-bottom: 0.8rem;
+    position: relative;
+    overflow: hidden;
+    font-size: 0.95rem;
+}
+
+.sidebar .btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.1), transparent);
+    transition: left 0.6s;
+}
+
+.sidebar .btn:hover::before {
+    left: 100%;
+}
+
+.sidebar .btn:hover {
+    background: white;
+    border-color: var(--or-satin);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar .btn-success {
+    background: linear-gradient(135deg, var(--noir-charcoal), var(--noir-profond));
+    color: white;
+    border: none;
+    margin-top: 0.5rem;
+}
+
+.sidebar .btn-success:hover {
+    background: linear-gradient(135deg, var(--noir-profond), var(--noir-charcoal));
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-gold);
+}
+
+/* Contenu principal CORRIGÉ */
 .content {
-    margin-left: 20%;
-    padding: 30px;
+    margin-left: 300px;
+    margin-right: 0;
+    padding: 2rem 0 1rem 2rem;
+    width: calc(100% - 300px);
+    min-height: 100vh;
 }
 
-.menu {
-    background-color: bisque !important;
-    color: black !important;
-    margin-left: 10px;
+.content h2 {
+    font-size: 2.3rem;
+    font-weight: 350;
+    color: var(--noir-profond);
+    margin-bottom: 2.5rem;
+    text-align: center;
+    position: relative;
+    padding: 0 1rem;
+}
+
+.content h2::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--or-pale), transparent);
+}
+
+/* Grille produits optimisée */
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2rem;
+    padding: 0 1rem;
+}
+
+/* Cartes produits */
+.card {
+    border: none;
+    border-radius: var(--border-radius);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    box-shadow: var(--shadow-elegant);
+    transition: var(--transition);
+    overflow: hidden;
+    position: relative;
+}
+
+.card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--or-pale), var(--or-brillant));
+    transform: scaleX(0);
+    transition: transform 0.4s ease;
+}
+
+.card:hover::before {
+    transform: scaleX(1);
+}
+
+.card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+}
+
+.card-img-top {
+    height: 380px;
+    object-fit: cover;
+    transition: var(--transition);
+}
+
+.card:hover .card-img-top {
+    transform: scale(1.03);
+}
+
+.card-body {
+    padding: 1.8rem;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.card-title {
+    font-size: 1.3rem;
+    font-weight: 400;
+    color: var(--noir-charcoal);
+    margin-bottom: 1rem;
+}
+
+.card-text {
+    font-size: 1.4rem;
+    font-weight: 350;
+    color: var(--or-pale);
+    margin-bottom: 1.5rem;
+}
+
+/* Boutons produits */
+.card .btn {
+    border: none;
+    border-radius: 10px;
+    padding: 0.9rem 1.2rem;
+    font-weight: 400;
+    transition: var(--transition);
+    margin-bottom: 0.7rem;
+    position: relative;
+    overflow: hidden;
+    font-size: 0.95rem;
+}
+
+.card .btn-primary {
+    background: linear-gradient(135deg, var(--noir-charcoal), var(--noir-profond));
+    color: white;
+}
+
+.card .btn-primary:hover:not(:disabled) {
+    background: linear-gradient(135deg, var(--noir-profond), var(--noir-charcoal));
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-gold);
+}
+
+.card .btn-primary:disabled {
+    background: var(--taupe-clair);
+    cursor: not-allowed;
+}
+
+.card .btn-warning {
+    background: linear-gradient(135deg, var(--or-pale), var(--or-brillant));
+    color: var(--noir-charcoal);
+}
+
+.card .btn-warning:hover {
+    background: linear-gradient(135deg, var(--or-brillant), var(--or-pale));
+    transform: translateY(-2px);
+}
+
+.card .btn-danger {
+    background: linear-gradient(135deg, #dc3545, #c82333);
+    color: white;
+}
+
+.card .btn-danger:hover {
+    background: linear-gradient(135deg, #c82333, #dc3545);
+    transform: translateY(-2px);
+}
+
+/* Message de connexion */
+.text-danger {
+    color: #dc3545 !important;
+    font-size: 0.85rem;
+    font-weight: 400;
+}
+
+/* Loading et erreurs */
+.loading-text, .error-text {
+    text-align: center;
+    font-size: 1.1rem;
+    color: var(--text-light);
+    margin: 2rem 0;
+}
+
+.error-text {
+    color: #dc3545;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .container-fluid {
+        max-width: 100%;
+        padding: 0 1.5rem;
+    }
+    
+    .sidebar {
+        width: 240px;
+        left: 1.5rem;
+    }
+    
+    .content {
+        margin-left: 270px;
+        width: calc(100% - 270px);
+    }
+    
+    .products-grid {
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.5rem;
+    }
+}
+
+@media (max-width: 992px) {
+    .sidebar {
+        position: relative;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: auto;
+        margin-bottom: 2rem;
+    }
+    
+    .content {
+        margin-left: 0;
+        width: 100%;
+        padding: 1rem 0;
+    }
+    
+    .products-grid {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .container-fluid {
+        padding: 0 1rem;
+    }
+    
+    .sidebar {
+        padding: 1.5rem 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .content {
+        padding: 0.5rem 0;
+    }
+    
+    .content h2 {
+        font-size: 1.8rem;
+        margin-bottom: 2rem;
+    }
+    
+    .products-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        padding: 0 0.5rem;
+    }
+    
+    .card-img-top {
+        height: 300px;
+    }
+    
+    .card-body {
+        padding: 1.5rem;
+    }
 }

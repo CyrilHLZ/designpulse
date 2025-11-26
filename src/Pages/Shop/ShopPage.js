@@ -1,13 +1,12 @@
 import { AllProducts, deleteProduct as deleteProductAPI } from "../../Services/Shop/ProductAPI";
 import { useEffect, useState } from "react";
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Navbar from "../../Components/Navbar";
-import {getUserRole} from "../../Components/Users/AuthUtils";
-import {getCurrentUser} from "../../Components/Users/AuthUtils";
+import { getUserRole } from "../../Components/Users/AuthUtils";
+import { getCurrentUser } from "../../Components/Users/AuthUtils";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../../Styles/Shop/ShopPage.css";
-
 
 const ShopPage = () => {
     const [products, setProduct] = useState([]);
@@ -34,11 +33,13 @@ const ShopPage = () => {
     }, []);
 
     const handleDelete = async (productId) => {
-        try {
-            await deleteProductAPI(productId);
-            setProduct(prev => prev.filter(p => p.id !== productId));
-        } catch (error) {
-            setError(error.message);
+        if (window.confirm("Êtes-vous sûr de vouloir supprimer ce produit ?")) {
+            try {
+                await deleteProductAPI(productId);
+                setProduct(prev => prev.filter(p => p.id !== productId));
+            } catch (error) {
+                setError(error.message);
+            }
         }
     };
 
@@ -64,60 +65,95 @@ const ShopPage = () => {
 
     return (
         <>
-            <div style={{ backgroundColor: "bisque" }}>
-                <Navbar />
+            <Navbar />
+            <div className="fond_de_page">
                 <div className="container-fluid">
-                    <div className="fond_de_page">
-                        {/* Sidebar */}
-                        <div className="menu col-md-3 sidebar p-3">
-                            <h4 className="mt-3 mb-3 text-center text-black text-decoration-underline">Menu</h4>
-                            <button className="btn btn-light w-100 mb-2" onClick={sortAZ}>Trier A-Z</button>
-                            <button className="btn btn-light w-100 mb-2" onClick={sortZA}>Trier Z-A</button>
+                    <div className="row">
+                        {/* Sidebar Élégante FIXE */}
+                        <div className="sidebar">
+                            <div className="menu">
+                                <h4>Menu Boutique</h4>
+                                <button className="btn btn-light w-100 mb-2" onClick={sortAZ}>
+                                    📊 Trier A-Z
+                                </button>
+                                <button className="btn btn-light w-100 mb-2" onClick={sortZA}>
+                                    📊 Trier Z-A
+                                </button>
                                 {isADMIN && (
-                                <button className="btn btn-success w-100" onClick={createProduct}>Créer un produit</button>
+                                    <button className="btn btn-success w-100 mt-2" onClick={createProduct}>
+                                        ✨ Créer un produit
+                                    </button>
                                 )}
+                            </div>
                         </div>
 
-                        {/* Contenu principal */}
-                        <div className="col-md-9 content text-center">
-                            <h2 className="my-4">Salut {user?.name || user?.lastname || "Utilisateur"} ! Bienvenue dans la boutique</h2>
+                        {/* Contenu Principal */}
+                        <div className="content">
+                            <h2>
+                                Bonjour {user?.name || user?.lastname || "cher client"} ! 
+                                <br />
+                                <small style={{ fontSize: '1.1rem', color: 'var(--taupe)', fontWeight: '300' }}>
+                                    Découvrez nos créations exclusives
+                                </small>
+                            </h2>
+                            
                             {loading ? (
-                                <p>Chargement...</p>
+                                <div className="loading-text">
+                                    <div className="d-flex justify-content-center align-items-center">
+                                        <div className="spinner-border text-warning me-3" role="status">
+                                            <span className="visually-hidden">Chargement...</span>
+                                        </div>
+                                        <span>Chargement de nos créations...</span>
+                                    </div>
+                                </div>
                             ) : error ? (
-                                <p className="text-danger">{error}</p>
+                                <p className="error-text">❌ {error}</p>
                             ) : (
-                                <div className="row">
+                                <div className="products-grid">
                                     {products.map(product => (
-                                        <div className="col-md-4 mb-4" key={product.id}>
-                                            <div className="card h-100 shadow-sm">
+                                        <div className="card-wrapper" key={product.id}>
+                                            <div className="card h-100">
                                                 <img
                                                     src={product.image ? `http://localhost:8080/upload/${product.image}` : "https://via.placeholder.com/300x200"}
                                                     className="card-img-top"
                                                     alt={product.name}
-                                                    style={{ height: "500px", objectFit: "cover" }}
+                                                    onError={(e) => {
+                                                        e.target.src = "https://via.placeholder.com/300x200/FAF0E6/8A7F6F?text=Image+Non+Disponible";
+                                                    }}
                                                 />
                                                 <div className="card-body d-flex flex-column">
                                                     <h5 className="card-title">{product.name}</h5>
                                                     <p className="card-text">{product.price} €</p>
                                                     <div className="mt-auto">
-                                                        <button className="btn btn-primary w-100 mb-2" disabled={!isADMIN && !isUSER} onClick={() => {
+                                                        <button 
+                                                            className="btn btn-primary w-100 mb-2" 
+                                                            disabled={!isADMIN && !isUSER} 
+                                                            onClick={() => {
                                                                 if (isADMIN || isUSER) {
                                                                     goToDetailsProductPage(product.id);
                                                                 }
                                                             }}
                                                         >
-                                                            Choisir ce produit
+                                                            🎨 Choisir ce design
                                                         </button>
                                                         {!isADMIN && !isUSER && (
-                                                            <small className="text-danger">Connectez-vous pour accéder à ce produit</small>
+                                                            <small className="text-danger d-block text-center">
+                                                                🔒 Connectez-vous pour accéder
+                                                            </small>
                                                         )}
                                                         {isADMIN && (
                                                             <>
-                                                                <button className="btn btn-warning w-100 mb-2" onClick={() => handleUpdate(product.id)}>
-                                                                    Modifier
+                                                                <button 
+                                                                    className="btn btn-warning w-100 mb-2" 
+                                                                    onClick={() => handleUpdate(product.id)}
+                                                                >
+                                                                    ✏️ Modifier
                                                                 </button>
-                                                                <button className="btn btn-danger w-100" onClick={() => handleDelete(product.id)}>
-                                                                    Supprimer
+                                                                <button 
+                                                                    className="btn btn-danger w-100" 
+                                                                    onClick={() => handleDelete(product.id)}
+                                                                >
+                                                                    🗑️ Supprimer
                                                                 </button>
                                                             </>
                                                         )}

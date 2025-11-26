@@ -1,41 +1,134 @@
+/* Navbar.css - Version Corrigée */
+
 nav {
-    z-index: 3;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: rgba(247, 243, 240, 0.95);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.6);
+  z-index: 1000;
+  padding: 0;
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.03);
 }
 
-.navbar {
-    display: inline;
+.navbar-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  height: 80px;
 }
 
-ul {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: space-evenly;
-    list-style: none;
-    background-color: bisque;
-    padding: 20px;
+.navbar-menu {
+  display: flex;
+  list-style: none;
+  gap: 3rem;
+  margin: 0;
+  padding: 0;
+  align-items: center;
+  height: 100%;
+}
+
+.navbar-menu li {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  position: relative;
 }
 
 a,
 button.nav-button {
-    font-size: x-large;
-    text-decoration: underline;
-    color: black;
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 0;
-    margin: 0;
-    display: inline; /* uniformise */
-    line-height: normal;
-    vertical-align: middle;
+  text-decoration: none;
+  color: var(--noir-profond);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.1rem;
+  font-weight: 350;
+  padding: 0.75rem 1.5rem;
+  border-radius: 10px;
+  transition: var(--transition);
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: auto;
+  line-height: 1;
+  white-space: nowrap;
+  letter-spacing: 0.02em;
+  overflow: hidden; /* Important pour contenir l'effet */
 }
 
+/* Assurer l'alignement parfait */
+.navbar-menu a,
+.navbar-menu button.nav-button {
+  min-height: 50px;
+  align-items: center;
+  justify-content: center;
+}
 
+/* EFFET DE SURVOL CORRIGÉ */
+a::before,
+button.nav-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%; 
+  width: 100%;
+  height: 100%;
+  background: var(--noir-charcoal);
+  border-radius: 10px;
+  transition: left 0.4s ease; 
+  z-index: -1;
+}
+
+a:hover::before,
+button.nav-button:hover::before {
+  left: 0; 
+}
+
+/* Changement de couleur du texte AU MOMENT du survol */
 a:hover,
 button.nav-button:hover {
-    color: black;
-    text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.40);
-    transform: scale(1.05);
-    transition: all 0.3s ease;
+  color: white;
+  transform: translateY(-2px);
+}
+
+/* Ligne décorative sous les éléments actifs */
+.navbar-menu li::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 2px;
+  background: var(--or-pale);
+  transition: var(--transition);
+}
+
+.navbar-menu li:hover::after {
+  width: 60%;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .navbar-container {
+    padding: 0 1.5rem;
+    height: 70px;
+  }
+  
+  .navbar-menu {
+    gap: 1.5rem;
+  }
+  
+  a,
+  button.nav-button {
+    font-size: 1rem;
+    padding: 0.6rem 1.2rem;
+    min-height: 44px;
+  }
 }

@@ -4,12 +4,11 @@ import { useContext } from "react";
 import { AuthContext } from "./Users/AuthContext";
 
 const Navbar = () => {
-    // On récupère le rôle et la fonction logout depuis le contexte global AuthContext
     const { role, logout } = useContext(AuthContext);
     const navigate = useNavigate();
     const isADMIN = role === "ADMIN";
     const isUSER = role === "USER";
-    // Déconnexion : supprime le user du localStorage et du contexte puis redirige
+
     const handleLogout = () => {
         logout();
         navigate("/Login");
@@ -19,21 +18,31 @@ const Navbar = () => {
         <nav className="navbar">
             <div className="navbar-container">
                 <ul className="navbar-menu">
-                    <li><Link to="/">Accueil</Link></li>
-                    <li><Link to="/Shop">Boutique</Link></li>
+                    <li>
+                        <Link to="/">Accueil</Link>
+                    </li>
+                    <li>
+                        <Link to="/Shop">Boutique</Link>
+                    </li>
                     {isADMIN && (
                         <li>
-                            <Link to="/AdminPanel">Administrateur</Link>
+                            <Link to="/AdminPanelPage">Administrateur</Link>
                         </li>
                     )}
                     {(isADMIN || isUSER) ? (
                         <li>
-                            <button onClick={handleLogout} className="nav-button">Déconnexion</button>
+                            <button onClick={handleLogout} className="nav-button">
+                                Déconnexion
+                            </button>
                         </li>
                     ) : (
                         <>
-                            <li><Link to="/Login">Connexion</Link></li>
-                            <li><Link to="/Register">Inscription</Link></li>
+                            <li>
+                                <Link to="/Login">Connexion</Link>
+                            </li>
+                            <li>
+                                <Link to="/Register">Inscription</Link>
+                            </li>
                         </>
                     )}
                 </ul>

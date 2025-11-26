@@ -1,0 +1,38 @@
+.products-scroll-container {
+    max-height: 600px;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+/* Style de la scrollbar */
+.products-scroll-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.products-scroll-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.products-scroll-container::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+
+.products-scroll-container::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+.product-item {
+    background-color: #f8f9fa;
+    transition: background-color 0.2s;
+}
+
+.product-item:hover {
+    background-color: #e9ecef;
+}
+
+.card {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    border: 1px solid rgba(0, 0, 0, 0.125);
+}

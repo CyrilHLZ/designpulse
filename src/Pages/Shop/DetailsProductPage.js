@@ -138,6 +138,7 @@ const DetailsProductPage = () => {
         <>
             <Navbar />
             <div className="product-detail-container">
+                {/* GESTION DE L'IMAGE CONSERVÉE IDENTIQUE */}
                 <DesignOverlay
                     imageUrl={formData.imageUrl}
                     design={design}
@@ -160,8 +161,8 @@ const DetailsProductPage = () => {
                     {/* ✅ Formulaire avec validation native */}
                     <form
                         onSubmit={(e) => {
-                            e.preventDefault(); // empêche reload
-                            handleSaveDesign(); // seulement si la validation HTML est OK
+                            e.preventDefault();
+                            handleSaveDesign();
                         }}
                     >
                         <div className="mb-3">
@@ -205,9 +206,8 @@ const DetailsProductPage = () => {
                                 <div className="container-boutton">
                                     <div className="mb-3">
                                         <label>Générer des designs par l'IA :</label>
-                                        {/* ⚠️ type="button" pour éviter validation */}
-                                        <button type="button" onClick={() => setShowModal(true)}>
-                                            Générer
+                                        <button type="button" className="btn-ia-generate" onClick={() => setShowModal(true)}>
+                                            🎨 Générer avec l'IA
                                         </button>
                                         {showModal && (
                                             <AIImageSearchModal
@@ -219,15 +219,13 @@ const DetailsProductPage = () => {
 
                                     <div className="mb-3">
                                         <label>Acheter le design :</label>
-                                        {/* ✅ type="submit" pour déclencher validation */}
-                                        <button type="submit">Acheter</button>
+                                        <button type="submit" className="btn-buy">🛒 Acheter maintenant</button>
                                     </div>
 
                                     <div className="mb-3">
                                         <label>Supprimer le design :</label>
-                                        {/* ⚠️ type="button" pour éviter validation */}
-                                        <button type="button" onClick={handleDeleteDesign}>
-                                            Supprimer
+                                        <button type="button" className="btn-delete" onClick={handleDeleteDesign}>
+                                            🗑️ Supprimer le design
                                         </button>
                                     </div>
                                 </div>

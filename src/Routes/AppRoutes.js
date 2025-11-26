@@ -9,6 +9,7 @@ import UpdateProductPage from "../Pages/Shop/UpdateProductPage";
 import DetailsProductPage from "../Pages/Shop/DetailsProductPage";
 import BuyProductPage from "../Pages/Shop/BuyProductPage";
 import OrderProductPage from "../Pages/Shop/OrderProductPage";
+import DetailsOrdersPage from "../Pages/AdminPanel/DetailsOrdersPage";
 
 const AppRoutes = () => {
     return (
@@ -17,14 +18,17 @@ const AppRoutes = () => {
                 <Route path="/" element={<HomePage />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />
-                <Route path="/adminPanel" element={<AdminPanelPage />} />
+                <Route path="/adminPanelPage" element={<AdminPanelPage />} />
+                <Route path="/DetailsOrdersPage" element={<DetailsOrdersPage />} />
+                <Route path="/DetailsOrdersPage/:orderId" element={<DetailsOrdersPage />} />
 
                 <Route path="/shop" element={<ShopPage />} />
                 <Route path="/createProduct" element={<CreateProductPage />} />
                 <Route path="/updateProduct/:productId" element={<UpdateProductPage />} />
                 <Route path="/BuyProductPage/:productId/" element={<BuyProductPage />} />
                 <Route path="/DetailsProductPage/:productId" element={<DetailsProductPage />} />
-                <Route path="OrderProductPage" element={<OrderProductPage />} />
+                <Route path="/OrderProductPage" element={<OrderProductPage />} />
+            
             </Routes>
         </BrowserRouter>
     );

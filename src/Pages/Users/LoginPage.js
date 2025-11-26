@@ -38,6 +38,7 @@ const LoginPage = () => {
 
             // Stocke l'utilisateur dans le contexte global et localStorage
             login(response);
+            console.log("Réponse API login brute:", response);
 
             // Redirige vers la boutique
             navigate("/shop");

@@ -5,6 +5,7 @@ import { getUserRole } from "./AuthUtils";
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
+
     // Stocke le rôle actuel dans un state (initialisé depuis localStorage)
     const [role, setRole] = useState(() => {
         const initialRole = getUserRole();
@@ -12,12 +13,22 @@ export const AuthProvider = ({ children }) => {
         return initialRole;
     });
 
+    // Stocke les informations sur l'utilisateur connecté
+    const [user, setUser] = useState(() => {
+        const userData = localStorage.getItem("user");
+        if (userData) {
+            return JSON.parse(userData);
+        } else {
+            return null;
+        }
+    })
+
     // Écoute les changements dans le localStorage (si on ouvre plusieurs onglets)
     useEffect(() => {
         const handleStorageChange = () => {
-            const newRole = getUserRole();
-            console.log("🔄 Changement localStorage, nouveau rôle:", newRole);
-            setRole(newRole);
+            const userData = localStorage.getItem("user");
+            setUser(userData ? JSON.parse(userData) : null);
+            setRole(getUserRole());
         };
         window.addEventListener("storage", handleStorageChange);
         return () => {
@@ -30,7 +41,7 @@ export const AuthProvider = ({ children }) => {
         console.log("✅ Rôle mis à jour:", role);
     }, [role]);
 
-    // Connexion : enregistre le user dans localStorage et met à jour le state
+
     const login = (user) => {
         console.log("🔐 Login avec:", user);
 
@@ -42,6 +53,7 @@ export const AuthProvider = ({ children }) => {
 
         console.log("📝 Utilisateur avec rôle:", userWithRole);
         localStorage.setItem("user", JSON.stringify(userWithRole));
+        setUser(userWithRole);
         setRole(userWithRole.role);
     };
 
@@ -49,11 +61,12 @@ export const AuthProvider = ({ children }) => {
     const logout = () => {
         console.log("🚪 Logout");
         localStorage.removeItem("user");
+        setUser(null);
         setRole(null);
     };
 
     return (
-        <AuthContext.Provider value={{ role, login, logout }}>
+        <AuthContext.Provider value={{ role, user, login, logout }}>
             {children}
         </AuthContext.Provider>
     );

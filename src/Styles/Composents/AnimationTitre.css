@@ -1,31 +1,74 @@
+/* AnimationTitre.css - Version Élégante */
+
 .Animation-Title {
-    display: flex;
-    justify-content: center;
-    font-size: 3rem;
-    font-weight: bold;
-    margin-top: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2.5rem;
+  min-height: 250px;
+  perspective: 1000px;
+}
+
+.left, .right {
+  display: flex;
 }
 
 .left span,
 .right span {
-    display: inline-block;
-    opacity: 0;
-    transform: translateX(0); /* point de départ neutre */
-    animation: slideIn 1s forwards;
-    text-shadow: 0 0 100px rgba(0, 0, 0, 1);
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(40px) rotateX(90deg);
+  animation: fadeUpElegant 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  font-size: 5.5rem;
+  font-weight: 300;
+  color: var(--noir-charcoal);
+  letter-spacing: -0.03em;
+  position: relative;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.left span::after,
+.right span::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--or-pale);
+  animation: underlineExpand 0.6s ease 1s forwards;
+}
+
+@keyframes fadeUpElegant {
+  to {
+    opacity: 1;
+    transform: translateY(0) rotateX(0deg);
+  }
+}
+
+@keyframes underlineExpand {
+  to {
+    width: 100%;
+  }
 }
 
 .left span {
-    transform: translateX(-500px); /* glisse depuis la gauche */
+  animation-delay: calc(var(--index) * 0.06s);
 }
 
 .right span {
-    transform: translateX(500px); /* glisse depuis la droite */
+  animation-delay: calc(var(--index) * 0.06s + 0.4s);
 }
 
-@keyframes slideIn {
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
+/* Mobile */
+@media (max-width: 768px) {
+  .Animation-Title {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .left span,
+  .right span {
+    font-size: 3.5rem;
+  }
 }

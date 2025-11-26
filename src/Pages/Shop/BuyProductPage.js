@@ -11,6 +11,8 @@ const BuyProductPage = () => {
         address: "",
         postalCode: "",
         city: "",
+        country: "",
+        phone: "",
     });
 
     const navigate = useNavigate();
@@ -71,11 +73,10 @@ const BuyProductPage = () => {
     return (
         <>
             <Navbar />
-            <h2 className="text-center mb-4">Achat du produit</h2>
+            <h2 className="gold-title" >Achat du produit</h2>
 
             {designData && (
                 <div className="container-product-infos">
-                    {/* ✅ Nouvelle méthode via composant */}
                     <DesignOverlay
                         imageUrl={designData.productData.imageUrl}
                         design={designData.overlay.url}
@@ -85,11 +86,11 @@ const BuyProductPage = () => {
                     />
 
                     {/* 🛒 Formulaire d'achat */}
-                    <div className="col-md-6">
+                    <div className="col-md-6 mb-5">
                         <form onSubmit={handleSubmit}>
                             <div className="mb-3">
                                 <label htmlFor="address" className="form-label">
-                                    Adresse
+                                    Adresse :
                                 </label>
                                 <input
                                     type="text"
@@ -103,7 +104,7 @@ const BuyProductPage = () => {
                             </div>
                             <div className="mb-3">
                                 <label htmlFor="postalCode" className="form-label">
-                                    Code Postal
+                                    Code Postal :
                                 </label>
                                 <input
                                     type="text"
@@ -117,7 +118,7 @@ const BuyProductPage = () => {
                             </div>
                             <div className="mb-3">
                                 <label htmlFor="city" className="form-label">
-                                    Ville
+                                    Ville :
                                 </label>
                                 <input
                                     type="text"
@@ -128,9 +129,37 @@ const BuyProductPage = () => {
                                     onChange={handleChange}
                                     required
                                 />
+                                <div className="mb-3">
+                                    <label htmlFor="country" className="form-label">
+                                        Pays :
+                                    </label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        id="country"
+                                        name="country"
+                                        value={formData.country}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </div>
+                                <div className="mb-3">
+                                    <label htmlFor="phone" className="form-label">
+                                        Numéro de Téléphone :
+                                    </label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        id="phone"
+                                        name="phone"
+                                        value={formData.phone}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </div>
                             </div>
                             <div className="container_boutton">
-                                <button type="submit" className="btn btn-success w-100">
+                                <button type="submit" className="btn btn-success w-100 mb-2">
                                     Valider la commande
                                 </button>
                                 <button type="button" onClick={handleBackToDetailsPage} className="btn btn-danger w-100">

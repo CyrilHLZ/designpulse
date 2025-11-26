@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "../../Components/Navbar";
-import {getAllOrders, getAllUsers, getOrdersByNumber, getOrdersByUserId, deleteOrderById, updateUserRole} from "../../Services/AdminPanel/AdminPanelPage";
+import {getAllOrders, getAllUsers, getOrdersByNumber, getOrdersByUserId, deleteOrderById, updateUserRole} from "../../Services/AdminPanel/AdminPanelPageAPI";
+import { useNavigate } from "react-router-dom";
 
 const AdminPanelPage = () => {
     const [orders, setOrders] = useState([]);
@@ -8,6 +9,7 @@ const AdminPanelPage = () => {
     const [filters, setFilters] = useState({ number: "", userId: "" });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetchAllData();
@@ -71,6 +73,10 @@ const AdminPanelPage = () => {
         }
     };
 
+    const handleDetailOrder = (orderId) => {
+        navigate(`/DetailsOrdersPage/${orderId}`);
+    };
+
     return (
         <>
             <Navbar />
@@ -105,6 +111,7 @@ const AdminPanelPage = () => {
                             <th>Numéro</th>
                             <th>Utilisateur</th>
                             <th>Action</th>
+                            <th>Détails Commande</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -121,6 +128,14 @@ const AdminPanelPage = () => {
                                         Annuler
                                     </button>
                                 </td>
+                                <td>
+                                <button 
+                                    className="btn btn-primary btn-sm"
+                                    onClick={() => handleDetailOrder(order.id)}
+                                >
+                                    Détails de la commande
+                                </button>
+                            </td>
                             </tr>
                         ))}
                         </tbody>
