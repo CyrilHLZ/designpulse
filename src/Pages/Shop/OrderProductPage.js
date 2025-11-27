@@ -30,23 +30,41 @@ const OrderProductPage = () => {
             number: orderNumber,
             price: designData.productData.price,
             quantity: 1,
+            // Informations d'adresse COMPLÈTES
             address: formData.address,
             city: formData.city,
+            postalCode: formData.postalCode,
             country: formData.country,
+            // Informations utilisateur
             email: user?.email, 
             phone: formData.phone,
+            // Statut
             status: "EN_ATTENTE",
+            // IDs pour les relations
             categoryId: designData.productData.category?.id,
             productId: designData.productData.id,
-            
-            };
+            userId: user?.id, // ← IMPORTANT: Ajouter l'ID utilisateur
+            // Données du design pour la persistance
+            designData: {
+                overlay: {
+                    url: designData.overlay.url,
+                    position: designData.overlay.position,
+                    scale: designData.overlay.scale
+                },
+                productData: {
+                    id: designData.productData.id,
+                    name: designData.productData.name,
+                    price: designData.productData.price,
+                    imageUrl: designData.productData.imageUrl,
+                    category: designData.productData.category
+                }
+            }
+        };
 
         try {
             const savedOrder = await createOrder(OrderDTO);
             console.log("✅ Commande créée :", savedOrder);
             console.log("📦 Données envoyées au backend :", OrderDTO);
-            console.log("📦 Category ID:", designData.productData.category?.id);
-            console.log("📦 Product complet:", designData.productData);
             
             // Nettoyer le localStorage après commande
             localStorage.removeItem("designData");
@@ -75,12 +93,15 @@ const OrderProductPage = () => {
         const savedOrderData = localStorage.getItem("orderData");
         
         if (savedDesignData) {
-            setDesignData(JSON.parse(savedDesignData));
+            const parsedData = JSON.parse(savedDesignData);
+            setDesignData(parsedData);
+            console.log("🎨 Design data chargé:", parsedData);
         }
         
         if (savedOrderData) {
             const orderData = JSON.parse(savedOrderData);
             setFormData(orderData.formData);
+            console.log("📝 Order data chargé:", orderData.formData);
         }
 
         setOrderNumber(generateOrderNumber());
@@ -94,7 +115,7 @@ const OrderProductPage = () => {
 
                 {designData && (
                     <div className="container-product-infos">
-                        {/* Aperçu du produit - GESTION DE L'IMAGE CONSERVÉE */}
+                        {/* Aperçu du produit */}
                         <DesignOverlay
                             imageUrl={designData.productData.imageUrl}
                             design={designData.overlay.url}
@@ -121,6 +142,11 @@ const OrderProductPage = () => {
                                 <div className="info-item">
                                     <span className="info-label">Prix</span>
                                     <span className="info-value price">{designData.productData.price} €</span>
+                                </div>
+
+                                <div className="info-item">
+                                    <span className="info-label">Utilisateur</span>
+                                    <span className="info-value">{user?.email} (ID: {user?.id})</span>
                                 </div>
                                 
                                 <div className="info-item">
@@ -151,6 +177,17 @@ const OrderProductPage = () => {
                                         <span className="info-value">{formData.phone}</span>
                                     </div>
                                 )}
+
+                                {/* Informations techniques */}
+                                <div className="info-item technical">
+                                    <span className="info-label">ID Produit</span>
+                                    <span className="info-value">{designData.productData.id}</span>
+                                </div>
+                                
+                                <div className="info-item technical">
+                                    <span className="info-label">ID Catégorie</span>
+                                    <span className="info-value">{designData.productData.category?.id}</span>
+                                </div>
                             </div>
 
                             <div className="order-actions">
