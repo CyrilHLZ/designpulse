@@ -76,7 +76,7 @@ const CreateProductPage = () => {
             <Navbar />
             <div className="container d-flex justify-content-center align-items-center" style={{ minHeight: "90vh" }}>
                 <div className="card shadow-lg p-4" style={{ width: "100%", maxWidth: "800px", borderRadius: "20px", marginBottom: "30px", marginTop: "20px" }}>
-                    <h2 className="text-center mb-4" style={{ background: "linear-gradient(90deg, var(--or-pale), var(--or-brillant))",WebkitBackgroundClip: "text",WebkitTextFillColor: "transparent",backgroundClip: "text"}}>Créer un nouveau produit</h2>
+                    <h2 className="text-center mb-4">Créer un nouveau produit</h2>
                     <form onSubmit={handleSubmit}>
                         <div className="mb-3">
                             <label htmlFor="name" className="form-label">Nom</label>

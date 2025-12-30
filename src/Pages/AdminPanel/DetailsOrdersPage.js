@@ -2,35 +2,8 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getOrderById, updateOrder } from "../../Services/AdminPanel/AdminPanelPageAPI";
 import Navbar from "../../Components/Navbar";
+import DesignOverlay from "../../Components/Design/DesignOverlay";
 import "../../Styles/AdminPanel/AdminPanelPage.css";
-
-// Composant pour l'aperçu du design
-const DesignOverlay = ({ productImage, designImage, position, scale }) => {
-    return (
-        <div className="design-preview" style={{ position: 'relative', display: 'inline-block' }}>
-            <img 
-                src={productImage} 
-                alt="Produit" 
-                style={{ maxWidth: '200px', height: 'auto' }}
-            />
-            {designImage && (
-                <img 
-                    src={designImage} 
-                    alt="Design"
-                    style={{
-                        position: 'absolute',
-                        left: position?.x || '50%',
-                        top: position?.y || '50%',
-                        transform: `translate(-50%, -50%) scale(${scale || 1})`,
-                        maxWidth: '80%',
-                        maxHeight: '80%',
-                        pointerEvents: 'none'
-                    }}
-                />
-            )}
-        </div>
-    );
-};
 
 const DetailsOrdersPage = () => {
     const { orderId } = useParams();
@@ -46,20 +19,20 @@ const DetailsOrdersPage = () => {
             try {
                 setLoading(true);
                 const orderData = await getOrderById(orderId);
-                console.log("Données complètes de la commande:", orderData);
+                console.log("🎯 DONNÉES COMPLÈTES DE LA COMMANDE:", orderData);
                 
                 setOrder(orderData);
                 
-                // Extraction des données existantes de la base de données
+                // Extraction des données
                 setFormData({
-                    // Informations de base de la commande
+                    // Informations de base
                     id: orderData.id,
                     number: orderData.number,
                     status: orderData.status || "EN_ATTENTE",
                     price: orderData.price,
                     quantity: orderData.quantity,
                     
-                    // Informations utilisateur (extraites de la commande)
+                    // Informations utilisateur
                     email: orderData.email,
                     phone: orderData.téléphone || orderData.phone,
                     address: orderData.adresse || orderData.address,
@@ -67,14 +40,14 @@ const DetailsOrdersPage = () => {
                     country: orderData.pays || orderData.country,
                     postalCode: orderData.postal_code || orderData.postalCode,
                     
-                    // Dates
-                    orderDate: orderData.date_de_commande,
-                    orderTime: orderData.heure_de_commande,
-                    deliveryDate: orderData.date_de_livraison,
-                    deliveryTime: orderData.heure_de_livraison,
+                    // ✅ DATES
+                    orderDate: orderData.orderDate,
+                    orderTime: orderData.orderTime,
+                    deliveryDate: orderData.deliveryDate,
+                    deliveryTime: orderData.deliveryTime,
                     
-                    // Produits et designs (structure telle que retournée par l'API)
-                    products: orderData.products || orderData.items || []
+                    // ✅ DESIGN DATA
+                    designData: orderData.designData || null
                 });
                 
             } catch (err) {
@@ -98,39 +71,11 @@ const DetailsOrdersPage = () => {
         }));
     };
 
-    const handleProductChange = (index, field, value) => {
-        setFormData(prev => ({
-            ...prev,
-            products: prev.products.map((product, i) => 
-                i === index ? { ...product, [field]: value } : product
-            )
-        }));
-    };
-
-    const handleDesignChange = (productIndex, field, value) => {
-        setFormData(prev => ({
-            ...prev,
-            products: prev.products.map((product, i) => 
-                i === productIndex ? {
-                    ...product,
-                    designData: {
-                        ...product.designData,
-                        overlay: {
-                            ...product.designData?.overlay,
-                            [field]: value
-                        }
-                    }
-                } : product
-            )
-        }));
-    };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
             await updateOrder(orderId, formData);
             setIsEditing(false);
-            // Recharger les données
             const updatedOrder = await getOrderById(orderId);
             setOrder(updatedOrder);
             alert("Commande mise à jour avec succès");
@@ -144,7 +89,30 @@ const DetailsOrdersPage = () => {
         navigate(-1);
     };
 
-    if (loading) return <div className="text-center mt-5"><p>Chargement des détails de la commande...</p></div>;
+    // Fonction pour formater les dates
+    const formatDate = (dateString, timeString) => {
+        if (!dateString) return "Non spécifiée";
+        
+        try {
+            const date = new Date(dateString);
+            const formattedDate = date.toLocaleDateString('fr-FR', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            });
+            
+            if (timeString) {
+                const cleanTime = timeString.split('.')[0];
+                return `${formattedDate} à ${cleanTime}`;
+            }
+            
+            return formattedDate;
+        } catch (error) {
+            return "Date invalide";
+        }
+    };
+
+    if (loading) return <div className="text-center mt-5"><p>Chargement...</p></div>;
     if (error) return <div className="alert alert-danger text-center mt-5">{error}</div>;
     if (!order) return <div className="text-center mt-5"><p>Commande non trouvée</p></div>;
 
@@ -155,16 +123,9 @@ const DetailsOrdersPage = () => {
                 <div className="d-flex justify-content-between align-items-center mb-4">
                     <h2>Détails de la commande #{formData.number}</h2>
                     <div>
-                        <button 
-                            className="btn btn-secondary me-2"
-                            onClick={handleBack}
-                        >
-                            Retour
-                        </button>
-                        <button 
-                            className={`btn ${isEditing ? 'btn-warning' : 'btn-primary'}`}
-                            onClick={() => setIsEditing(!isEditing)}
-                        >
+                        <button className="btn btn-secondary me-2" onClick={handleBack}>Retour</button>
+                        <button className={`btn ${isEditing ? 'btn-warning' : 'btn-primary'}`}
+                            onClick={() => setIsEditing(!isEditing)}>
                             {isEditing ? 'Annuler' : 'Modifier'}
                         </button>
                     </div>
@@ -181,80 +142,39 @@ const DetailsOrdersPage = () => {
                                 <div className="card-body">
                                     <div className="row g-3">
                                         <div className="col-12">
-                                            <label htmlFor="email" className="form-label">Email :</label>
-                                            <input 
-                                                type="email" 
-                                                name="email" 
-                                                value={formData.email || ''} 
-                                                onChange={handleInputChange}
-                                                className="form-control"
-                                                disabled={!isEditing}
-                                            />
+                                            <label className="form-label">Email :</label>
+                                            <input type="email" name="email" value={formData.email || ''} 
+                                                onChange={handleInputChange} className="form-control" disabled={!isEditing}/>
                                         </div>
                                         <div className="col-12">
-                                            <label htmlFor="phone" className="form-label">Téléphone :</label>
-                                            <input 
-                                                type="text" 
-                                                name="phone" 
-                                                value={formData.phone || ''} 
-                                                onChange={handleInputChange}
-                                                className="form-control"
-                                                disabled={!isEditing}
-                                            />
+                                            <label className="form-label">Téléphone :</label>
+                                            <input type="text" name="phone" value={formData.phone || ''} 
+                                                onChange={handleInputChange} className="form-control" disabled={!isEditing}/>
                                         </div>
                                         <div className="col-12">
-                                            <label htmlFor="address" className="form-label">Adresse :</label>
-                                            <input 
-                                                type="text" 
-                                                name="address" 
-                                                value={formData.address || ''} 
-                                                onChange={handleInputChange}
-                                                className="form-control"
-                                                disabled={!isEditing}
-                                            />
+                                            <label className="form-label">Adresse :</label>
+                                            <input type="text" name="address" value={formData.address || ''} 
+                                                onChange={handleInputChange} className="form-control" disabled={!isEditing}/>
                                         </div>
                                         <div className="col-md-4">
-                                            <label htmlFor="postalCode" className="form-label">Code Postal :</label>
-                                            <input 
-                                                type="text" 
-                                                name="postalCode" 
-                                                value={formData.postalCode || ''} 
-                                                onChange={handleInputChange}
-                                                className="form-control"
-                                                disabled={!isEditing}
-                                            />
+                                            <label className="form-label">Code Postal :</label>
+                                            <input type="text" name="postalCode" value={formData.postalCode || ''} 
+                                                onChange={handleInputChange} className="form-control" disabled={!isEditing}/>
                                         </div>
                                         <div className="col-md-4">
-                                            <label htmlFor="city" className="form-label">Ville :</label>
-                                            <input 
-                                                type="text" 
-                                                name="city" 
-                                                value={formData.city || ''} 
-                                                onChange={handleInputChange}
-                                                className="form-control"
-                                                disabled={!isEditing}
-                                            />
+                                            <label className="form-label">Ville :</label>
+                                            <input type="text" name="city" value={formData.city || ''} 
+                                                onChange={handleInputChange} className="form-control" disabled={!isEditing}/>
                                         </div>
                                         <div className="col-md-4">
-                                            <label htmlFor="country" className="form-label">Pays :</label>
-                                            <input 
-                                                type="text" 
-                                                name="country" 
-                                                value={formData.country || ''} 
-                                                onChange={handleInputChange}
-                                                className="form-control"
-                                                disabled={!isEditing}
-                                            />
+                                            <label className="form-label">Pays :</label>
+                                            <input type="text" name="country" value={formData.country || ''} 
+                                                onChange={handleInputChange} className="form-control" disabled={!isEditing}/>
                                         </div>
                                         <div className="col-12">
-                                            <label htmlFor="status" className="form-label">Statut :</label>
-                                            <select 
-                                                name="status" 
-                                                value={formData.status || ''} 
-                                                onChange={handleInputChange}
-                                                className="form-select"
-                                                disabled={!isEditing}
-                                            >
+                                            <label className="form-label">Statut :</label>
+                                            <select name="status" value={formData.status || ''} 
+                                                onChange={handleInputChange} className="form-select" disabled={!isEditing}>
                                                 <option value="EN_ATTENTE">En attente</option>
                                                 <option value="CONFIRMEE">Confirmée</option>
                                                 <option value="EXPEDIEE">Expédiée</option>
@@ -277,43 +197,23 @@ const DetailsOrdersPage = () => {
                                     <div className="row g-3">
                                         <div className="col-md-6">
                                             <label className="form-label">Prix total :</label>
-                                            <input 
-                                                type="text" 
-                                                name="price"
-                                                value={formData.price || ''} 
-                                                onChange={handleInputChange}
-                                                className="form-control"
-                                                disabled={!isEditing}
-                                            />
+                                            <input type="text" name="price" value={formData.price || ''} 
+                                                onChange={handleInputChange} className="form-control" disabled={!isEditing}/>
                                         </div>
                                         <div className="col-md-6">
-                                            <label className="form-label">Quantité totale :</label>
-                                            <input 
-                                                type="number" 
-                                                name="quantity"
-                                                value={formData.quantity || ''} 
-                                                onChange={handleInputChange}
-                                                className="form-control"
-                                                disabled={!isEditing}
-                                            />
+                                            <label className="form-label">Quantité :</label>
+                                            <input type="number" name="quantity" value={formData.quantity || ''} 
+                                                onChange={handleInputChange} className="form-control" disabled={!isEditing}/>
                                         </div>
                                         <div className="col-md-6">
                                             <label className="form-label">Date commande :</label>
-                                            <input 
-                                                type="text" 
-                                                value={formData.orderDate ? `${formData.orderDate} ${formData.orderTime || ''}` : 'Non spécifiée'} 
-                                                className="form-control"
-                                                disabled
-                                            />
+                                            <input type="text" value={formatDate(formData.orderDate, formData.orderTime)} 
+                                                className="form-control" disabled/>
                                         </div>
                                         <div className="col-md-6">
                                             <label className="form-label">Date livraison :</label>
-                                            <input 
-                                                type="text" 
-                                                value={formData.deliveryDate ? `${formData.deliveryDate} ${formData.deliveryTime || ''}` : 'Non spécifiée'} 
-                                                className="form-control"
-                                                disabled
-                                            />
+                                            <input type="text" value={formatDate(formData.deliveryDate)} 
+                                                className="form-control" disabled/>
                                         </div>
                                     </div>
                                 </div>
@@ -321,126 +221,147 @@ const DetailsOrdersPage = () => {
                         </div>
                     </div>
 
-                    {/* Produits avec Designs */}
+                    {/* Section Design */}
                     <div className="card mb-4">
                         <div className="card-header bg-black text-white">
-                            <h4>Produits de la commande</h4>
+                            <h4>Produit Personnalisé</h4>
                         </div>
                         <div className="card-body">
-                            {formData.products && formData.products.length > 0 ? (
-                                formData.products.map((product, index) => (
-                                    <div key={product.id || index} className="product-item mb-4 p-3 border rounded">
-                                        <div className="row">
-                                            {/* Aperçu du design */}
-                                            <div className="col-md-4 text-center">
-                                                <h6>Aperçu du produit personnalisé</h6>
-                                                <DesignOverlay
-                                                    productImage={product.imageUrl || `http://localhost:8080/upload/${product.image}`}
-                                                    designImage={product.designData?.overlay?.url}
-                                                    position={product.designData?.overlay?.position}
-                                                    scale={product.designData?.overlay?.scale}
-                                                />
-                                            </div>
+                            {formData.designData ? (
+                                <div className="row">
+                                    {/* COLONNE GAUCHE : Aperçu du produit avec design */}
+                                    <div className="col-md-6">
+                                        <h5 className="text-center">Aperçu du design</h5>
+                                        
+                                        {/* ✅ Ajout d'un wrapper avec les styles nécessaires */}
+                                        <div style={{ 
+                                            display: "flex", 
+                                            justifyContent: "center",
+                                            alignItems: "flex-start"
+                                        }}>
+                                            <DesignOverlay
+                                                imageUrl={
+                                                    formData.designData.product?.image 
+                                                        ? `http://localhost:8080/upload/${formData.designData.product.image}`
+                                                        : "/default-product.jpg"
+                                                }
+                                                design={formData.designData.designUrl}
+                                                position={{ 
+                                                    x: formData.designData.positionX || 0, 
+                                                    y: formData.designData.positionY || 0 
+                                                }}
+                                                scale={formData.designData.scale || 1.0}
+                                                editable={false}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* ✅ COLONNE DROITE : Détails */}
+                                    <div className="col-md-6">
+                                        <h5>Détails du design</h5>
+                                        <div className="product-details">
                                             
                                             {/* Informations produit */}
-                                            <div className="col-md-8">
+                                            {formData.designData.product && (
+                                                <div className="mb-3 p-3" style={{backgroundColor: '#f8f9fa', borderRadius: '8px'}}>
+                                                    <h6 className="mb-3">📦 Informations Produit</h6>
+                                                    <p className="mb-2"><strong>Nom :</strong> {formData.designData.product.name}</p>
+                                                    <p className="mb-2"><strong>Prix :</strong> {formData.designData.product.price} €</p>
+                                                    <p className="mb-2"><strong>Catégorie :</strong> {formData.designData.product.category?.name}</p>
+                                                    <p className="mb-0"><strong>Image :</strong> {formData.designData.product.image}</p>
+                                                </div>
+                                            )}
+                                            
+                                            {/* Type de design */}
+                                            <div className="mb-3">
+                                                <label className="form-label fw-bold">Type de design :</label>
+                                                <div className="p-2 bg-light rounded">
+                                                    {formData.designData.designUrl?.startsWith('data:image') 
+                                                        ? '🎨 Image personnalisée (Base64)' 
+                                                        : '🔗 Image externe (URL)'}
+                                                </div>
+                                            </div>
+                                            
+                                            {/* Position et échelle */}
+                                            <div className="mb-3">
+                                                <label className="form-label fw-bold">Paramètres de positionnement :</label>
                                                 <div className="row g-2">
-                                                    <div className="col-12">
-                                                        <label className="form-label">Nom du produit :</label>
-                                                        <input 
-                                                            type="text" 
-                                                            value={product.name || ''} 
-                                                            onChange={(e) => handleProductChange(index, 'name', e.target.value)}
-                                                            className="form-control"
-                                                            disabled={!isEditing}
-                                                        />
-                                                    </div>
-                                                    <div className="col-md-6">
-                                                        <label className="form-label">Prix :</label>
-                                                        <input 
-                                                            type="text" 
-                                                            value={product.price || ''} 
-                                                            onChange={(e) => handleProductChange(index, 'price', e.target.value)}
-                                                            className="form-control"
-                                                            disabled={!isEditing}
-                                                        />
-                                                    </div>
-                                                    <div className="col-md-6">
-                                                        <label className="form-label">Quantité :</label>
-                                                        <input 
-                                                            type="number" 
-                                                            value={product.quantity || 1} 
-                                                            onChange={(e) => handleProductChange(index, 'quantity', parseInt(e.target.value))}
-                                                            className="form-control"
-                                                            disabled={!isEditing}
-                                                        />
-                                                    </div>
-                                                    <div className="col-12">
-                                                        <label className="form-label">Description :</label>
-                                                        <textarea 
-                                                            value={product.description || ''} 
-                                                            onChange={(e) => handleProductChange(index, 'description', e.target.value)}
-                                                            className="form-control"
-                                                            rows="2"
-                                                            disabled={!isEditing}
-                                                        />
-                                                    </div>
-                                                    
-                                                    {/* Paramètres du design */}
-                                                    {product.designData && (
-                                                        <div className="col-12 mt-3 p-3 bg-light rounded">
-                                                            <h6>Paramètres du design</h6>
-                                                            <div className="row g-2">
-                                                                <div className="col-md-6">
-                                                                    <label className="form-label">Position X :</label>
-                                                                    <input 
-                                                                        type="number" 
-                                                                        value={product.designData.overlay?.position?.x || 0} 
-                                                                        onChange={(e) => handleDesignChange(index, 'x', parseInt(e.target.value))}
-                                                                        className="form-control"
-                                                                        disabled={!isEditing}
-                                                                    />
-                                                                </div>
-                                                                <div className="col-md-6">
-                                                                    <label className="form-label">Position Y :</label>
-                                                                    <input 
-                                                                        type="number" 
-                                                                        value={product.designData.overlay?.position?.y || 0} 
-                                                                        onChange={(e) => handleDesignChange(index, 'y', parseInt(e.target.value))}
-                                                                        className="form-control"
-                                                                        disabled={!isEditing}
-                                                                    />
-                                                                </div>
-                                                                <div className="col-12">
-                                                                    <label className="form-label">Échelle :</label>
-                                                                    <input 
-                                                                        type="number" 
-                                                                        step="0.1"
-                                                                        value={product.designData.overlay?.scale || 1} 
-                                                                        onChange={(e) => handleDesignChange(index, 'scale', parseFloat(e.target.value))}
-                                                                        className="form-control"
-                                                                        disabled={!isEditing}
-                                                                    />
-                                                                </div>
-                                                            </div>
+                                                    <div className="col-6">
+                                                        <small className="text-muted">Position X</small>
+                                                        <div className="p-2 bg-light rounded text-center">
+                                                            {formData.designData.positionX || 0} px
                                                         </div>
+                                                    </div>
+                                                    <div className="col-6">
+                                                        <small className="text-muted">Position Y</small>
+                                                        <div className="p-2 bg-light rounded text-center">
+                                                            {formData.designData.positionY || 0} px
+                                                        </div>
+                                                    </div>
+                                                    <div className="col-12">
+                                                        <small className="text-muted">Échelle</small>
+                                                        <div className="p-2 bg-light rounded text-center">
+                                                            {formData.designData.scale || 1} × ({Math.round((formData.designData.scale || 1) * 100)}%)
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            {/* Aperçu du design seul */}
+                                            <div className="mb-3">
+                                                <label className="form-label fw-bold">Aperçu du design seul :</label>
+                                                <div 
+                                                    className="border p-3 text-center" 
+                                                    style={{
+                                                        backgroundColor: '#ffffff', 
+                                                        borderRadius: '8px',
+                                                        minHeight: '200px',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center',
+                                                        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                                                    }}
+                                                >
+                                                    {formData.designData.designUrl ? (
+                                                        <img 
+                                                            src={formData.designData.designUrl} 
+                                                            alt="Design personnalisé" 
+                                                            style={{
+                                                                maxWidth: '100%', 
+                                                                maxHeight: '250px',
+                                                                objectFit: 'contain'
+                                                            }}
+                                                            onError={(e) => {
+                                                                console.error("❌ Erreur chargement design");
+                                                                e.target.parentElement.innerHTML = 
+                                                                    '<p class="text-danger mb-0">❌ Erreur de chargement du design</p>';
+                                                            }}
+                                                            onLoad={() => {
+                                                                console.log("✅ Design miniature chargé avec succès");
+                                                            }}
+                                                        />
+                                                    ) : (
+                                                        <p className="text-muted mb-0">Aucun design disponible</p>
                                                     )}
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                ))
+                                </div>
                             ) : (
-                                <p className="text-center">Aucun produit dans cette commande</p>
+                                <div className="text-center p-5">
+                                    <p className="text-muted mb-0">
+                                        <i className="bi bi-image" style={{fontSize: '3rem', display: 'block', marginBottom: '1rem'}}></i>
+                                        Aucun design personnalisé pour cette commande
+                                    </p>
+                                </div>
                             )}
                         </div>
                     </div>
 
                     {isEditing && (
                         <div className="text-center mt-4">
-                            <button type="submit" className="btn btn-success me-2">
-                                Enregistrer les modifications
-                            </button>
+                            <button type="submit" className="btn btn-success me-2">Enregistrer</button>
                         </div>
                     )}
                 </form>

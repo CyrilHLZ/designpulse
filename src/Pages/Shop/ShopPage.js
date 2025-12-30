@@ -63,6 +63,10 @@ const ShopPage = () => {
         setProduct([...products].sort((a, b) => b.name.localeCompare(a.name)));
     };
 
+    const InventoryPage = () => {
+        navigate(`/InventoryProductPage`);
+    };
+
     return (
         <>
             <Navbar />
@@ -84,6 +88,9 @@ const ShopPage = () => {
                                         ✨ Créer un produit
                                     </button>
                                 )}
+                                <button className="btn btn-success w-100 mt-2" onClick={InventoryPage}>
+                                    Inventaire
+                                </button>
                             </div>
                         </div>
 

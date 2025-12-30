@@ -1,0 +1,25 @@
+.bg-light-warning {
+                    background-color: #fff3cd !important;
+                }
+                .bg-light-success {
+                    background-color: #d1e7dd !important;
+                }
+                .table-info {
+                    background-color: #fff3cd !important;
+                }
+                .table-hover tbody tr:hover {
+                    background-color: #fff3cd !important;
+                }
+                .card {
+                    border-radius: 10px;
+                }
+                .card-header {
+                    border-radius: 10px 10px 0 0 !important;
+                }
+                input[type="number"]::-webkit-inner-spin-button,
+                input[type="number"]::-webkit-outer-spin-button {
+                    opacity: 1;
+                }
+                .badge {
+                    font-size: 0.75em;
+                }

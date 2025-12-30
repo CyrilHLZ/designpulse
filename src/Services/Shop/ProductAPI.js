@@ -3,6 +3,7 @@ import axios from "axios";
 // URLs de base
 const BASE_URL_PRODUCT = "http://localhost:8080/api/products";
 const BASE_URL_DESIGN = "http://localhost:8080/api/design";
+const BASE_URL_STOCK = "http://localhost:8080/api/stock";
 
 // 1. Récupérer tous les produits
 export const AllProducts = async () => {
@@ -19,7 +20,23 @@ export const AllProducts = async () => {
     }
 };
 
-// 2. Récupérer un produit par son ID
+// 2. Récupérer un produit par son nom
+export const ProductByName = async (name) => {
+    try {
+        const response = await axios.get(`${BASE_URL_PRODUCT}/search?name=${name}`, {
+            headers: {
+                "Content-type": "application/json"
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Le produit n'a pas pu être récupérer par son nom", error.message);
+        throw error;
+    }    
+};
+
+
+// 3. Récupérer un produit par son ID
 export const ProductById = async (productId) => {
     try {
         const response = await axios.get(`${BASE_URL_PRODUCT}/${productId}`, {
@@ -34,7 +51,7 @@ export const ProductById = async (productId) => {
     }
 };
 
-// 3. Mettre à jour un produit
+// 4. Mettre à jour un produit
 export const updateProduct = async (productId, updatedData) => {
     const formData = new FormData();
     formData.append("name", updatedData.name);
@@ -61,7 +78,7 @@ export const updateProduct = async (productId, updatedData) => {
 };
 
 
-// 4. Supprimer un produit
+// 5. Supprimer un produit
 export const deleteProduct = async (productId) => {
     try {
         const response = await axios.delete(`${BASE_URL_PRODUCT}/${productId}`, {
@@ -76,7 +93,7 @@ export const deleteProduct = async (productId) => {
     }
 };
 
-// 5. Acheter un produit
+// 6. Acheter un produit
 export const buyProduct = async (productId) => {
     try {
         const response = await axios.post(`${BASE_URL_PRODUCT}/buy/${productId}`, {}, {
@@ -91,7 +108,7 @@ export const buyProduct = async (productId) => {
     }
 };
 
-// 6. Création d'un produit
+// 7. Création d'un produit
 export const createProduct = async (product) => {
     try {
         const formData = new FormData();
@@ -131,7 +148,7 @@ export const createProduct = async (product) => {
 //     }
 // }
 
-// 7. Sauvegarde du design et du produit
+// 8. Sauvegarde du design et du produit
 export const SaveDesignProduct = async (productId, payload) => {
     try {
         const response = await axios.post(`${BASE_URL_DESIGN}/product/${productId}/saveImage`, {
@@ -154,7 +171,7 @@ export const SaveDesignProduct = async (productId, payload) => {
     }
 };
 
-// 8. Sauvegarder une image en base64
+// 9. Sauvegarder une image en base64
 export const SaveCapturedImage = async (productId, base64Image) => {
     try {
         // Option 1: Utiliser le nouvel endpoint avec productId
@@ -184,7 +201,7 @@ export const SaveCapturedImage = async (productId, base64Image) => {
     }
 };
 
-// 9. Suppression du design
+// 10. Suppression du design
 export const deleteDesign = async (designId, userId = 1) => {
     try {
         const response = await axios.post(`${BASE_URL_DESIGN}/deleteDesign`, {
@@ -205,3 +222,94 @@ export const deleteDesign = async (designId, userId = 1) => {
         throw error;
     }
 };
+
+// 12. Modification des quantités sur un produit (une taille)
+export const updateQuantity = async (stockDTO) => {
+    try {
+        console.log("Envoi des données au backend:", stockDTO);
+        
+        const response = await axios.put(
+            `${BASE_URL_STOCK}/updateQuantity`,
+            stockDTO, 
+            {
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            }
+        );
+        
+        console.log("Réponse du backend:", response.data);
+        return response.data;
+    } catch (error) {
+        console.error("Erreur lors de la modification du produit", error);
+        
+        if (error.response) {
+            console.error("Status:", error.response.status);
+            console.error("Data:", error.response.data);
+            console.error("Headers:", error.response.headers);
+        }
+        
+        throw error;
+    }
+};
+
+// 13. Mettre à jour plusieurs stocks à la fois
+export const updateMultipleQuantities = async (stockDTO) => {
+    try {
+        console.log("Envoi de plusieurs stocks au backend:", stockDTO);
+        
+        const response = await axios.put(
+            `${BASE_URL_STOCK}/updateMultiple`,
+            stockDTO, 
+            {
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            }
+        );
+        
+        console.log("Réponse du backend:", response.data);
+        return response.data;
+    } catch (error) {
+        console.error("Erreur lors de la modification multiple", error);
+        
+        if (error.response) {
+            console.error("Status:", error.response.status);
+            console.error("Data:", error.response.data);
+            console.error("Headers:", error.response.headers);
+        }
+        
+        throw error;
+    }
+};
+
+// Récupération des stocks sur un produit
+export const getStockByProduct = async (productId) => {
+    try {
+        const response = await axios.get(`${BASE_URL_STOCK}/product/${productId}`, {
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Erreur lors de la récupération des stocks', error.message);
+        throw error;
+    }
+}
+
+// Récupérer les tailles disponibles pour un produit
+export const getAvailableSizes = async (productId) => {
+    try {
+        const response = await axios.get(`${BASE_URL_STOCK}/product/${productId}/sizes`, {
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Erreur lors de la récupération des tailles', error.message);
+        throw error;
+    }
+}
+

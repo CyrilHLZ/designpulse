@@ -21,50 +21,125 @@ const OrderProductPage = () => {
     const { user } = useContext(AuthContext);
     const navigate = useNavigate();
 
+    const handleBack = () => {
+        navigate("/Shop");
+    }
+
+    const generateOrderNumber = () => {
+        return Math.floor(Math.random() * 90000000) + 10000000;
+    }
+
+    const convertBlobToBase64 = async (blobUrl) => {
+        try {
+            console.log("Début de la convertion du blob vers la base64");
+
+            // fetch qui traitre la requete HTTP
+            const response = await fetch(blobUrl);
+
+            // Conversion du blob 
+            const blob = await response.blob();
+            console.log("Blob récupéré, de la taille", blob.size);
+
+            // FileReader = API javaScript qui permet de lire les fichiers
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+
+                // Lecture est terminée, renvoie du résultat
+                reader.onloadend = () => {
+                    console.log("Conversion terminée, taille Base64:", reader.result.length, "caractères");
+                    resolve(reader.result);
+            }
+
+            // En cas d'erreur
+            reader.onerror = reject;
+
+            // readAsDataURL génère automatiquement le format en base64
+            reader.readAsDataURL(blob);
+        });
+        } catch (error) {
+            console.error("Erreur lors de la convertion", error);
+            return null;
+        }
+    };
+
     const handleConfirmOrder = async () => {
         if (!designData) return;
         
         setLoading(true);
 
+        // Fonctions pour formater les dates
+        const formatDateForBackend = (date) => {
+            return date.toISOString().split('T')[0]; // "2024-01-15"
+        };
+
+        const now = new Date();
+        const deliveryDate = new Date();
+        deliveryDate.setDate(now.getDate() + 7); // +7 jours
+
+        let designUrlToSend = designData.overlay.url;
+
+        if (designData.overlay.url.startsWith('blob:')) {
+            console.log("Détection d'un Blob URL, convertion en base64...");
+            
+            // Appel de la fonction pour convertion
+            designUrlToSend = await convertBlobToBase64(designData.overlay.url);
+
+            // Si la convertion échoue, on arrête la commande
+            if (!designUrlToSend) {
+                alert("Erreur lors de la convertion de l'image");
+                setLoading(false);
+                return;
+            }
+
+                console.log("✅ Design converti en Base64, prêt pour envoi");
+            } else {
+                console.log("ℹ️ Le design est déjà en format permanent, pas de conversion nécessaire");
+        }
+
+        
+
         const OrderDTO = {
             number: orderNumber,
             price: designData.productData.price,
             quantity: 1,
-            // Informations d'adresse COMPLÈTES
+            
+            // Informations d'adresse
             address: formData.address,
             city: formData.city,
             postalCode: formData.postalCode,
             country: formData.country,
+
             // Informations utilisateur
             email: user?.email, 
             phone: formData.phone,
+
             // Statut
             status: "EN_ATTENTE",
+
             // IDs pour les relations
             categoryId: designData.productData.category?.id,
             productId: designData.productData.id,
-            userId: user?.id, // ← IMPORTANT: Ajouter l'ID utilisateur
-            // Données du design pour la persistance
+            userId: user?.id,
+            
+            // ✅ NOUVELLE STRUCTURE DESIGN DATA
             designData: {
-                overlay: {
-                    url: designData.overlay.url,
-                    position: designData.overlay.position,
-                    scale: designData.overlay.scale
-                },
-                productData: {
-                    id: designData.productData.id,
-                    name: designData.productData.name,
-                    price: designData.productData.price,
-                    imageUrl: designData.productData.imageUrl,
-                    category: designData.productData.category
-                }
-            }
+                designUrl: designUrlToSend,
+                positionX: designData.overlay.position?.x || 50,
+                positionY: designData.overlay.position?.y || 50,
+                scale: designData.overlay.scale || 1.0,
+                productId: designData.productData.id
+            },
+            
+            // ✅ DATES
+            orderDate: formatDateForBackend(now),
+            deliveryDate: formatDateForBackend(deliveryDate),
         };
+
+        console.log("📦 DONNÉES ENVOYÉES AU BACKEND:", OrderDTO);
 
         try {
             const savedOrder = await createOrder(OrderDTO);
             console.log("✅ Commande créée :", savedOrder);
-            console.log("📦 Données envoyées au backend :", OrderDTO);
             
             // Nettoyer le localStorage après commande
             localStorage.removeItem("designData");
@@ -79,14 +154,6 @@ const OrderProductPage = () => {
             setLoading(false);
         }
     };
-
-    const handleBack = () => {
-        navigate("/Shop");
-    }
-
-    const generateOrderNumber = () => {
-        return Math.floor(Math.random() * 90000000) + 10000000;
-    }
 
     useEffect(() => {
         const savedDesignData = localStorage.getItem("designData");
@@ -187,6 +254,17 @@ const OrderProductPage = () => {
                                 <div className="info-item technical">
                                     <span className="info-label">ID Catégorie</span>
                                     <span className="info-value">{designData.productData.category?.id}</span>
+                                </div>
+
+                                {/* Design Info */}
+                                <div className="info-item technical">
+                                    <span className="info-label">Design Position</span>
+                                    <span className="info-value">X: {designData.overlay.position?.x || 50}, Y: {designData.overlay.position?.y || 50}</span>
+                                </div>
+                                
+                                <div className="info-item technical">
+                                    <span className="info-label">Design Scale</span>
+                                    <span className="info-value">{designData.overlay.scale || 1.0}</span>
                                 </div>
                             </div>
 

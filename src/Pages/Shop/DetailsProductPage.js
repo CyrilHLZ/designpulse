@@ -4,7 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "../../Components/Navbar";
 import AIImageSearchModal from "./IA/AIImageSearchModal";
 import DesignOverlay from "../../Components/Design/DesignOverlay";
-import { ProductById, deleteDesign, SaveCapturedImage } from "../../Services/Shop/ProductAPI";
+import { ProductById, deleteDesign, SaveCapturedImage, getStockByProduct } from "../../Services/Shop/ProductAPI";
 import "../../Styles/Shop/DetailsProductPage.css";
 import { AuthContext } from "../../Components/Users/AuthContext";
 
@@ -22,6 +22,8 @@ const DetailsProductPage = () => {
         size: "",
         imageUrl: "",
     });
+
+    const [stockData, setStockData] = useState({});
 
     const { role } = useContext(AuthContext);
     const isADMIN = role === "ADMIN";
@@ -45,12 +47,56 @@ const DetailsProductPage = () => {
                 const data = await ProductById(productId);
                 const imageUrl = `${BASE_IMAGE_URL}/${data.image}`;
                 setFormData({ ...data, imageUrl });
+                
+                // Charger les stocks
+                const stocks = await getStockByProduct(productId);
+
+                if (stocks && Array.isArray(stocks)) {
+                    const stockMap = {};
+                    stocks.forEach(item => {
+                        stockMap[item.size] = item.quantity;
+                    });
+                    setStockData(stockMap);
+                } else if (stocks && typeof stocks === 'object') {
+                    setStockData(stocks);
+                }
             } catch (error) {
                 console.error("Erreur lors de la récupération :", error.message);
             }
         };
         loadData();
     }, [productId]);
+
+    // Fonction pour afficher le statut du stock
+    const renderStockStatus = () => {
+        const size = formData.size;
+
+        if (!size) return null;
+
+        const quantity = stockData[size];
+
+        if (quantity === undefined) return null;
+
+        if (quantity === 0) {
+            return (
+                <div style={{ color: "#dc3545", marginTop: "10px", fontWeight: "bold", fontSize: "0.95rem" }}>
+                    🚫 Rupture de stock pour la taille {size}
+                </div>
+            );
+        } else if (quantity < 5) {
+            return (
+                <div style={{ color: "#ff8c00", marginTop: "10px", fontWeight: "bold", fontSize: "0.95rem" }}>
+                    ⚠️ Vite ! Plus que {quantity} article(s) en taille {size} !
+                </div>
+            );
+        } else {
+            return (
+                <div style={{ color: "#198754", marginTop: "10px", fontWeight: "bold", fontSize: "0.95rem" }}>
+                    ✅ En stock ({quantity} disponibles)
+                </div>
+            );
+        }
+    };
 
     // 📂 Import image utilisateur
     const handleImageUpload = (e) => {
@@ -81,6 +127,15 @@ const DetailsProductPage = () => {
     // 📸 Sauvegarde design
     const handleSaveDesign = async () => {
         if (!containerRef.current) return;
+
+        // Vérifier le stock avant de continuer
+        const size = formData.size;
+        const quantity = stockData[size];
+        
+        if (quantity === 0) {
+            alert(`Désolé, la taille ${size} est en rupture de stock.`);
+            return;
+        }
 
         try {
             const canvas = await html2canvas(containerRef.current);
@@ -138,7 +193,6 @@ const DetailsProductPage = () => {
         <>
             <Navbar />
             <div className="product-detail-container">
-                {/* GESTION DE L'IMAGE CONSERVÉE IDENTIQUE */}
                 <DesignOverlay
                     imageUrl={formData.imageUrl}
                     design={design}
@@ -158,7 +212,6 @@ const DetailsProductPage = () => {
                     <p>{formData.description}</p>
                     <p><strong>{formData.price} €</strong></p>
 
-                    {/* ✅ Formulaire avec validation native */}
                     <form
                         onSubmit={(e) => {
                             e.preventDefault();
@@ -182,6 +235,8 @@ const DetailsProductPage = () => {
                                 <option value="L">L</option>
                                 <option value="XL">XL</option>
                             </select>
+                            {/* Affichage du statut du stock */}
+                            {renderStockStatus()}
                         </div>
 
                         <div className="mb-3">

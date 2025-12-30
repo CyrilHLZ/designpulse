@@ -10,6 +10,7 @@ import DetailsProductPage from "../Pages/Shop/DetailsProductPage";
 import BuyProductPage from "../Pages/Shop/BuyProductPage";
 import OrderProductPage from "../Pages/Shop/OrderProductPage";
 import DetailsOrdersPage from "../Pages/AdminPanel/DetailsOrdersPage";
+import InventoryProductPage from "../Pages/Shop/InventoryProductPage";
 
 const AppRoutes = () => {
     return (
@@ -27,6 +28,8 @@ const AppRoutes = () => {
                 <Route path="/updateProduct/:productId" element={<UpdateProductPage />} />
                 <Route path="/BuyProductPage/:productId/" element={<BuyProductPage />} />
                 <Route path="/DetailsProductPage/:productId" element={<DetailsProductPage />} />
+
+                <Route path="/inventoryProductPage" element={<InventoryProductPage />} />
                 <Route path="/OrderProductPage" element={<OrderProductPage />} />
             
             </Routes>
