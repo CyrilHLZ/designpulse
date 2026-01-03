@@ -67,6 +67,10 @@ const ShopPage = () => {
         navigate(`/InventoryProductPage`);
     };
 
+    const SpecialProduct = () => {
+        navigate(`/SpecialProductPage`);
+    };
+
     return (
         <>
             <Navbar />
@@ -82,6 +86,9 @@ const ShopPage = () => {
                                 </button>
                                 <button className="btn btn-light w-100 mb-2" onClick={sortZA}>
                                     📊 Trier Z-A
+                                </button>
+                                <button className="btn btn-success w-100 mb-2" onClick={SpecialProduct}>
+                                    Produit Spécifique 3D
                                 </button>
                                 {isADMIN && (
                                     <button className="btn btn-success w-100 mt-2" onClick={createProduct}>

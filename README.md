@@ -1,70 +1,110 @@
-# Getting Started with Create React App
+# DesignPulse
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+DesignPulse is a modern, AI-powered e-commerce platform that revolutionizes custom product design. Built with React, it allows users to generate unique designs using artificial intelligence, browse and purchase products, manage orders, and more. The platform features an intuitive admin panel for managing users and orders, user authentication, and a responsive design for seamless experiences across devices.
+
+## Features
+
+- **AI Design Studio**: Generate custom designs with AI, adjust styles, colors, compositions, brightness, contrast, and saturation.
+- **E-commerce Shop**: Browse products, view details, buy items, create new products, update existing ones, and manage inventory.
+- **User Management**: Register, login, and manage user roles (admin/user).
+- **Admin Panel**: View and manage orders, users, and order details.
+- **Email Integration**: Contact form to send emails directly from the app.
+- **Responsive Design**: Built with Bootstrap for mobile-first, responsive layouts.
+- **Product Customization**: Overlay designs on products, save captured images, and manage stock by size.
+
+## Tech Stack
+
+- **Frontend**: React 19, React Router DOM for routing
+- **UI Framework**: Bootstrap 5.3.5
+- **HTTP Client**: Axios for API calls
+- **Additional Libraries**:
+  - html2canvas: For capturing and saving images
+  - react-draggable: For draggable UI components
+  - react-router-dom: For client-side routing
+- **Build Tool**: Create React App
+- **Backend**: Assumed to be running on `http://localhost:8080` (Spring Boot or similar, based on API calls)
+
+## Prerequisites
+
+- Node.js (version 14 or higher)
+- npm or yarn
+- Backend server running on `http://localhost:8080` (not included in this repo)
+
+## Installation
+
+1. Clone the repository:
+   ```bash
+   git clone <repository-url>
+   cd designpulse
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Start the development server:
+   ```bash
+   npm start
+   ```
+
+   The app will run on [http://localhost:3000](http://localhost:3000).
+
+## Usage
+
+1. **Home Page**: Explore the platform's features and contact form.
+2. **Authentication**: Register or login to access user-specific features.
+3. **Shop**: Browse products, view details, and make purchases.
+4. **AI Design Studio**: Generate and customize designs for products.
+5. **Admin Panel** (Admin users only): Manage orders, users, and system settings.
+6. **Product Management**: Create, update, and manage product inventory.
+
+### API Endpoints
+
+The frontend communicates with a backend API. Key endpoints include:
+
+- **Users**: `/api/users/login`, `/api/users` (register assumed)
+- **Products**: `/api/products`, `/api/products/{id}`, `/api/products/create`, etc.
+- **Orders**: `/api/orders`, `/api/orders/{id}`, `/api/orders/create`
+- **IA (AI)**: `/api/ia/generate`, `/api/design/product/{id}/saveImage`
+- **Email**: `/api/email/send` (assumed based on service)
+
+Ensure the backend is running and accessible at `http://localhost:8080`.
+
+## Project Structure
+
+```
+src/
+├── Components/          # Reusable UI components (Navbar, IA Window, etc.)
+├── Pages/               # Page components (Home, Shop, Admin, etc.)
+├── Routes/              # Routing configuration
+├── Services/            # API service functions
+├── Styles/              # CSS files for styling
+├── Assets/              # Static assets
+└── ...
+```
 
 ## Available Scripts
 
-In the project directory, you can run:
+- `npm start`: Runs the app in development mode.
+- `npm test`: Launches the test runner.
+- `npm run build`: Builds the app for production.
+- `npm run eject`: Ejects from Create React App (irreversible).
 
-### `npm start`
+## Contributing
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+1. Fork the repository.
+2. Create a feature branch: `git checkout -b feature/your-feature`.
+3. Commit changes: `git commit -m 'Add your feature'`.
+4. Push to the branch: `git push origin feature/your-feature`.
+5. Open a pull request.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## License
 
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Learn More
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- [React Documentation](https://reactjs.org/)
+- [Create React App Documentation](https://facebook.github.io/create-react-app/docs/getting-started)
+- [Bootstrap Documentation](https://getbootstrap.com/docs/5.3/getting-started/introduction/)
