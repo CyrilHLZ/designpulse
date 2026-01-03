@@ -89,7 +89,7 @@ const ShopPage = () => {
                                     </button>
                                 )}
                                 <button className="btn btn-success w-100 mt-2" onClick={InventoryPage}>
-                                    Inventaire
+                                        📦Inventaire
                                 </button>
                             </div>
                         </div>
